@@ -28,12 +28,11 @@ repositories {
 extra["springCloudVersion"] = "2023.0.3"
 
 dependencies {
-	implementation("org.springframework.boot:spring-boot-starter-data-elasticsearch")
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+	implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
-	implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client")
 	compileOnly("org.projectlombok:lombok")
 	annotationProcessor("org.projectlombok:lombok")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")

@@ -1,6 +1,5 @@
 package kan9hee.nolaejui_location.service
 
-import kan9hee.nolaejui_location.dto.CurrentLocationDto
 import kan9hee.nolaejui_location.dto.PlayLogByLocationDto
 import kan9hee.nolaejui_location.entity.PlayLogByLocation
 import org.bson.types.ObjectId
@@ -27,13 +26,10 @@ class PlayLogService(private val mongoTemplate: MongoTemplate) {
         mongoTemplate.save(newPlayLog)
     }
 
-    fun getNearbyPlayLog(currentLocationDto: CurrentLocationDto): List<Long> {
+    fun getNearbyPlayLog(longitude: Double,latitude: Double): List<Long> {
         val query = Query().addCriteria(
             Criteria.where("location").nearSphere(
-                Point(
-                    currentLocationDto.longitude,
-                    currentLocationDto.latitude
-                )
+                Point(longitude,latitude)
             ).maxDistance(3.0/6378137.0)
         )
 

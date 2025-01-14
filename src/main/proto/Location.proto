@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+message PlayLogProblem{
+  repeated PlayLogByLocation playLog = 1;
+  string problemCase = 2;
+  string problemDetail = 3;
+}
+
+message PlayLogByLocation{
+  string logId = 1;
+  int64 musicId = 2;
+  string userName = 3;
+  double longitude = 4;
+  double latitude = 5;
+}
+
+message PlayLogId{
+  string id = 1;
+}
+
+message GrpcResult{
+  bool isSuccess = 1;
+  string resultMessage = 2;
+}
+
+// other server
+service AdminResponseServer{
+  rpc reportPlayLogProblem(PlayLogProblem) returns (GrpcResult){}
+}
+
+service PlayLogServer {
+  rpc deletePlayLog(PlayLogId) returns (GrpcResult){}
+  rpc addMusicPlayLog(PlayLogByLocation) returns (GrpcResult){}
+}

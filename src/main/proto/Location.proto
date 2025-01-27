@@ -3,7 +3,7 @@ syntax = "proto3";
 import "google/protobuf/timestamp.proto";
 
 message PlayLogProblem{
-  repeated PlayLogByLocation playLog = 1;
+  PlayLogByLocation playLog = 1;
   string problemCase = 2;
   string problemDetail = 3;
 }
@@ -12,8 +12,20 @@ message PlayLogByLocation{
   string logId = 1;
   int64 musicId = 2;
   string userName = 3;
-  double longitude = 4;
-  double latitude = 5;
+  LocationInfo locationInfo = 4;
+}
+
+message LocationInfo{
+  double longitude = 1;
+  double latitude = 2;
+}
+
+message AccessToken{
+  string accessToken = 1;
+}
+
+message PickupResult{
+  repeated int64 musicIds = 1;
 }
 
 message PlayLogId{
@@ -25,6 +37,11 @@ message GrpcResult{
   string resultMessage = 2;
 }
 
+//other server
+service AuthServer{
+  rpc getUserName(AccessToken) returns (GrpcResult){}
+}
+
 // other server
 service AdminResponseServer{
   rpc reportPlayLogProblem(PlayLogProblem) returns (GrpcResult){}
@@ -33,4 +50,5 @@ service AdminResponseServer{
 service PlayLogServer {
   rpc deletePlayLog(PlayLogId) returns (GrpcResult){}
   rpc addMusicPlayLog(PlayLogByLocation) returns (GrpcResult){}
+  rpc pickupMusics(LocationInfo) returns (PickupResult){}
 }

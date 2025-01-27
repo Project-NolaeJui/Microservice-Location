@@ -26,11 +26,11 @@ class GrpcService(private val playLogService: PlayLogService):PlayLogServerGrpcK
             PlayLogByLocationDto(
                 request.musicId,
                 request.userName,
-                request.longitude,
-                request.latitude
+                request.locationInfo.longitude,
+                request.locationInfo.latitude
             )
         )
-        val resultMessage = if(addResult) "delete success" else "delete failed"
+        val resultMessage = if(addResult) "add success" else "add failed"
 
         return withContext(Dispatchers.Default){
             Location.GrpcResult.newBuilder()

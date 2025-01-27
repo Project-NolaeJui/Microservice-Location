@@ -1,9 +1,8 @@
 package kan9hee.nolaejui_location.service
 
+import kan9hee.nolaejui_location.dto.CurrentLocationDto
 import kan9hee.nolaejui_location.dto.PlayLogByLocationDto
-import kan9hee.nolaejui_location.dto.PlayLogReportDto
 import kan9hee.nolaejui_location.entity.PlayLogByLocation
-import net.devh.boot.grpc.client.inject.GrpcClient
 import org.springframework.data.geo.Point
 import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint
@@ -12,9 +11,7 @@ import org.springframework.data.mongodb.core.query.Query
 import org.springframework.stereotype.Service
 
 @Service
-class PlayLogService(@GrpcClient("nolaejui-management")
-                     private val managementStub: AdminResponseServerGrpcKt.AdminResponseServerCoroutineStub,
-                     private val mongoTemplate: MongoTemplate) {
+class PlayLogService(private val mongoTemplate: MongoTemplate) {
     fun addPlayLog(playLogByLocationDto: PlayLogByLocationDto): Boolean {
         return try {
             val newPlayLog = PlayLogByLocation(
@@ -33,10 +30,10 @@ class PlayLogService(@GrpcClient("nolaejui-management")
         }
     }
 
-    fun getNearbyPlayLog(longitude: Double,latitude: Double): List<Long> {
+    fun getNearbyPlayLog(currentLocationDto: CurrentLocationDto): List<Long> {
         val query = Query().addCriteria(
             Criteria.where("location").nearSphere(
-                Point(longitude,latitude)
+                Point(currentLocationDto.longitude,currentLocationDto.latitude)
             ).maxDistance(3.0/6378137.0)
         )
 
@@ -52,24 +49,5 @@ class PlayLogService(@GrpcClient("nolaejui-management")
 
         val result = mongoTemplate.remove(query,PlayLogByLocation::class.java)
         return result.deletedCount>0
-    }
-
-    suspend fun reportPlayLogProblem(playLogReportDto: PlayLogReportDto): String? {
-        val request = Location.PlayLogProblem.newBuilder()
-            .addPlayLog(
-                Location.PlayLogByLocation.newBuilder()
-                    .setLogId(playLogReportDto.playLogId)
-                    .setMusicId(playLogReportDto.playLog.musicId)
-                    .setUserName(playLogReportDto.playLog.userInfo)
-                    .setLongitude(playLogReportDto.playLog.longitude)
-                    .setLatitude(playLogReportDto.playLog.latitude)
-                    .build()
-            )
-            .setProblemCase(playLogReportDto.problemCase)
-            .setProblemDetail(playLogReportDto.problemDetail)
-            .build()
-
-        val response = managementStub.reportPlayLogProblem(request)
-        return response.resultMessage
     }
 }

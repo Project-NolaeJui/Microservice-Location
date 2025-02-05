@@ -37,11 +37,6 @@ message GrpcResult{
   string resultMessage = 2;
 }
 
-//other server
-service AuthServer{
-  rpc getUserName(AccessToken) returns (GrpcResult){}
-}
-
 // other server
 service AdminResponseServer{
   rpc reportPlayLogProblem(PlayLogProblem) returns (GrpcResult){}
@@ -49,6 +44,5 @@ service AdminResponseServer{
 
 service PlayLogServer {
   rpc deletePlayLog(PlayLogId) returns (GrpcResult){}
-  rpc addMusicPlayLog(PlayLogByLocation) returns (GrpcResult){}
   rpc pickupMusics(LocationInfo) returns (PickupResult){}
 }

@@ -1,12 +1,12 @@
 package kan9hee.nolaejui_location.service
 
 import PlayLogServerGrpcKt
-import kan9hee.nolaejui_location.dto.PlayLogByLocationDto
+import kan9hee.nolaejui_location.dto.CurrentLocationDto
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import org.lognet.springboot.grpc.GRpcService
+import net.devh.boot.grpc.server.service.GrpcService
 
-@GRpcService
+@GrpcService
 class GrpcService(private val playLogService: PlayLogService):PlayLogServerGrpcKt.PlayLogServerCoroutineImplBase() {
 
     override suspend fun deletePlayLog(request: Location.PlayLogId): Location.GrpcResult {
@@ -21,21 +21,16 @@ class GrpcService(private val playLogService: PlayLogService):PlayLogServerGrpcK
         }
     }
 
-    override suspend fun addMusicPlayLog(request: Location.PlayLogByLocation): Location.GrpcResult {
-        val addResult = playLogService.addPlayLog(
-            PlayLogByLocationDto(
-                request.musicId,
-                request.userName,
-                request.locationInfo.longitude,
-                request.locationInfo.latitude
-            )
+    override suspend fun pickupMusics(request: Location.LocationInfo): Location.PickupResult {
+        val musicIds = playLogService.getNearbyPlayLog(
+            CurrentLocationDto(
+                request.longitude,
+                request.latitude)
         )
-        val resultMessage = if(addResult) "add success" else "add failed"
 
         return withContext(Dispatchers.Default){
-            Location.GrpcResult.newBuilder()
-                .setIsSuccess(addResult)
-                .setResultMessage(resultMessage)
+            Location.PickupResult.newBuilder()
+                .addAllMusicIds(musicIds)
                 .build()
         }
     }

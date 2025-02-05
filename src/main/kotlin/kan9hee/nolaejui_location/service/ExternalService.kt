@@ -5,22 +5,8 @@ import net.devh.boot.grpc.client.inject.GrpcClient
 import org.springframework.stereotype.Service
 
 @Service
-class ExternalService(@GrpcClient("nolaejui-auth")
-                      private val authStub: AuthServerGrpcKt.AuthServerCoroutineStub,
-                      @GrpcClient("nolaejui-management")
+class ExternalService(@GrpcClient("nolaejui-management")
                       private val managementStub: AdminResponseServerGrpcKt.AdminResponseServerCoroutineStub) {
-
-    suspend fun getUsername(accessTokenString:String): String {
-        val request = Location.AccessToken.newBuilder()
-            .setAccessToken(accessTokenString)
-            .build()
-
-        val response = authStub.getUserName(request)
-        if(!response.isSuccess)
-            throw RuntimeException(response.resultMessage)
-
-        return response.resultMessage
-    }
 
     suspend fun reportPlayLogProblem(playLogReportDto: PlayLogReportDto): String? {
         val request = Location.PlayLogProblem.newBuilder()

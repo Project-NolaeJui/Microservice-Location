@@ -38,7 +38,6 @@ dependencies {
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client")
 
-	implementation("io.github.lognet:grpc-spring-boot-starter:5.1.5")
 	implementation("io.grpc:grpc-protobuf:1.68.2")
 	implementation("io.grpc:grpc-netty:1.68.2")
 	implementation("io.grpc:grpc-kotlin-stub:1.4.1")

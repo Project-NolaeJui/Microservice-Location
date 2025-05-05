@@ -6,7 +6,7 @@ import org.springframework.data.mongodb.core.index.GeoSpatialIndexType
 import org.springframework.data.mongodb.core.index.GeoSpatialIndexed
 import org.springframework.data.mongodb.core.mapping.Document
 
-@Document(collection = "play_log")
+@Document(collection = "play-log")
 @Getter
 class PlayLogByLocation(val musicId:Long,
                         val userInfo:String,

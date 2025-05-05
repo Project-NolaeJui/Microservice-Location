@@ -5,22 +5,26 @@ import kan9hee.nolaejui_location.dto.PlayLogByLocationDto
 import kan9hee.nolaejui_location.dto.PlayLogReportDto
 import kan9hee.nolaejui_location.service.ExternalService
 import kan9hee.nolaejui_location.service.PlayLogService
-import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.*
 
-@Controller
+@RestController
 @RequestMapping("/location")
 class PlayLogController(private val externalService: ExternalService,
                         private val playLogService: PlayLogService) {
 
     @GetMapping("/getNearbyMusicId")
-    fun getNearbyMusicId(@RequestParam(value = "location") currentLocationDto: CurrentLocationDto): List<Long> {
+    suspend fun getNearbyMusicId(
+        @RequestParam longitude: Double,
+        @RequestParam latitude: Double
+    ): List<Long> {
+        val currentLocationDto = CurrentLocationDto(longitude, latitude)
         return playLogService.getNearbyPlayLog(currentLocationDto)
     }
 
     @PostMapping("/addMusicPlayLog")
     suspend fun addMusicPlayLog(@RequestBody playLogByLocationDto: PlayLogByLocationDto) {
         playLogService.addPlayLog(playLogByLocationDto)
+        playLogService.addPickablePlayLog(playLogByLocationDto)
     }
 
     @PostMapping("/reportMusicPlayLog")

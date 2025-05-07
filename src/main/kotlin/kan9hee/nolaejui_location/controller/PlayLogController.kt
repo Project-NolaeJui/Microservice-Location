@@ -22,13 +22,19 @@ class PlayLogController(private val externalService: ExternalService,
     }
 
     @PostMapping("/addMusicPlayLog")
-    suspend fun addMusicPlayLog(@RequestBody playLogByLocationDto: PlayLogByLocationDto) {
-        playLogService.addPlayLog(playLogByLocationDto)
-        playLogService.addPickablePlayLog(playLogByLocationDto)
+    suspend fun addMusicPlayLog(
+        @RequestHeader("X-User-Id") userId:String,
+        @RequestBody playLogByLocationDto: PlayLogByLocationDto
+    ) {
+        playLogService.addPlayLog(userId,playLogByLocationDto)
+        playLogService.addPickablePlayLog(userId,playLogByLocationDto)
     }
 
     @PostMapping("/reportMusicPlayLog")
-    suspend fun reportMusicPlayLog(@RequestBody playLogReportDto: PlayLogReportDto): String? {
-        return externalService.reportPlayLogProblem(playLogReportDto)
+    suspend fun reportMusicPlayLog(
+        @RequestHeader("X-User-Id") userId:String,
+        @RequestBody playLogReportDto: PlayLogReportDto
+    ): String? {
+        return externalService.reportPlayLogProblem(userId,playLogReportDto)
     }
 }

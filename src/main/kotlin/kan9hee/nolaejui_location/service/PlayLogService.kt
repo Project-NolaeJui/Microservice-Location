@@ -20,10 +20,13 @@ import org.springframework.stereotype.Service
 class PlayLogService(private val reactiveMongoTemplate: ReactiveMongoTemplate,
                      private val redisTemplate: StringRedisTemplate) {
 
-    suspend fun addPlayLog(playLogByLocationDto: PlayLogByLocationDto): PlayLogByLocation? {
+    suspend fun addPlayLog(
+        userId:String,
+        playLogByLocationDto: PlayLogByLocationDto
+    ): PlayLogByLocation? {
         val newPlayLog = PlayLogByLocation(
             playLogByLocationDto.musicId,
-            playLogByLocationDto.userInfo,
+            userId,
             GeoJsonPoint(
                 playLogByLocationDto.longitude,
                 playLogByLocationDto.latitude
@@ -32,9 +35,12 @@ class PlayLogService(private val reactiveMongoTemplate: ReactiveMongoTemplate,
         return reactiveMongoTemplate.save(newPlayLog).awaitSingle()
     }
 
-    suspend fun addPickablePlayLog(playLogByLocationDto: PlayLogByLocationDto){
+    suspend fun addPickablePlayLog(
+        userId:String,
+        playLogByLocationDto: PlayLogByLocationDto
+    ){
         val point = Point(playLogByLocationDto.longitude, playLogByLocationDto.latitude)
-        val member = "${playLogByLocationDto.musicId}:${playLogByLocationDto.userInfo}"
+        val member = "${playLogByLocationDto.musicId}:${userId}"
         val now = System.currentTimeMillis()
 
         redisTemplate.opsForGeo()

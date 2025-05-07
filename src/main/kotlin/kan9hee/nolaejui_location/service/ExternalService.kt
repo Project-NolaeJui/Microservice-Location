@@ -8,12 +8,15 @@ import org.springframework.stereotype.Service
 class ExternalService(@GrpcClient("nolaejui-management")
                       private val managementStub: AdminResponseServerGrpcKt.AdminResponseServerCoroutineStub) {
 
-    suspend fun reportPlayLogProblem(playLogReportDto: PlayLogReportDto): String? {
+    suspend fun reportPlayLogProblem(
+        userId:String,
+        playLogReportDto: PlayLogReportDto
+    ): String? {
         val request = Location.PlayLogProblem.newBuilder()
             .setPlayLog(Location.PlayLogByLocation.newBuilder()
                 .setLogId(playLogReportDto.playLogId)
                 .setMusicId(playLogReportDto.playLog.musicId)
-                .setUserName(playLogReportDto.playLog.userInfo)
+                .setUserName(userId)
                 .setLocationInfo(
                     Location.LocationInfo.newBuilder()
                         .setLongitude(playLogReportDto.playLog.longitude)
